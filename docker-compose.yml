@@ -1,0 +1,48 @@
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: apps/gateway/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth
+      - event
+
+  auth:
+    build:
+      context: .
+      dockerfile: apps/auth/Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - auth-db
+
+  event:
+    build:
+      context: .
+      dockerfile: apps/event/Dockerfile
+    ports:
+      - "3002:3002"
+    depends_on:
+      - event-db
+
+  auth-db:
+    image: mongo
+    container_name: auth-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - auth-db-data:/data/db
+
+  event-db:
+    image: mongo
+    container_name: event-db
+    ports:
+      - "27018:27017"
+    volumes:
+      - event-db-data:/data/db
+
+volumes:
+  auth-db-data:
+  event-db-data:
